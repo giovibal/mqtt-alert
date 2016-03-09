@@ -4,6 +4,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -113,7 +114,8 @@ public class MqttAlert implements MqttCallback {
             // Open an audio input stream.
             // http://www.wavsource.com/sfx/sfx.htm
             InputStream soundFile = getClass().getResourceAsStream("/car_chirp_x.wav");
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            InputStream soundFileBuffered = new BufferedInputStream(soundFile);
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFileBuffered);
             // Get a sound clip resource.
             Clip clip = AudioSystem.getClip();
             // Open audio clip and load samples from the audio input stream.
