@@ -6,7 +6,7 @@ global io.github.giovibal.SoundPlayer soundPlayer;
 declare PirEvent
     @role(event)
     @timestamp(timestamp)
-//    @expires( 1m1s )
+    @expires( 2m )
 end
 
 declare window GateEvents
@@ -36,7 +36,24 @@ rule "Intrusion Detected"
         $evt : PirEvent(msg contains "Presenza rilevata")
     then
         engine.logEvent("--- Presenza Rilevata !!");
-        soundPlayer.playAlertSound();
+        soundPlayer.playWarningSound();
 end
 
+
+
+rule "Intrusion Detected 2"
+    when
+        $evt : PirEvent(msg contains "Presenza rilevata")
+        PirEvent(this != $evt, msg contains "Presenza rilevata", this after[0,2m] $evt)
+
+        // after
+        accumulate (
+            PirEvent(msg contains "Presenza rilevata", this after[0,2m] $evt );
+            $cnt : count( 1 );
+            $cnt > 3
+        )
+    then
+        engine.logEvent("--- Presenza Rilevata Consecutivamente!!");
+        soundPlayer.playAlertSound();
+end
 
