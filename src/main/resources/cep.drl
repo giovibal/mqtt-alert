@@ -6,7 +6,7 @@ global io.github.giovibal.SoundPlayer soundPlayer;
 declare PirEvent
     @role(event)
     @timestamp(timestamp)
-    @expires( 2m )
+//    @expires( 5m )
 end
 
 declare window GateEvents
@@ -24,7 +24,7 @@ end
 rule "Missing Communication"
     when
         $evt : PirEvent()
-        not( PirEvent(this != $evt, this after[0,1m5s] $evt) )
+        not( PirEvent(this != $evt, this after[0,1m30s] $evt) )
     then
         engine.logEvent("--- Mancata Comunicazione !! ");
         soundPlayer.playAlertSound();
@@ -43,17 +43,28 @@ end
 
 rule "Intrusion Detected 2"
     when
-        $evt : PirEvent(msg contains "Presenza rilevata")
-        PirEvent(this != $evt, msg contains "Presenza rilevata", this after[0,2m] $evt)
-
-        // after
+        //$evt : PirEvent(msg contains "Presenza rilevata") over window:length(2)
+        //PirEvent(this != $evt, msg contains "Presenza rilevata", this after[0,2m] $evt) over window:length(2)
         accumulate (
-            PirEvent(msg contains "Presenza rilevata", this after[0,2m] $evt );
+            PirEvent(msg contains "Presenza rilevata") over window:time(2m) ;
             $cnt : count( 1 );
-            $cnt > 3
+            $cnt > 1
         )
     then
-        engine.logEvent("--- Presenza Rilevata Consecutivamente!!");
+        engine.logEvent("--- Presenza Rilevata Consecutivamente !! count: " + $cnt);
         soundPlayer.playAlertSound();
+end
+
+
+rule "Missing Communication 2"
+    when
+        accumulate (
+            PirEvent(msg contains "Nessuna presenza") over window:time(2m30s) ;
+            $cnt : count( 1 );
+            $cnt < 2
+        )
+    then
+        engine.logEvent("--- Mancata Comunicazione 2 !! ( pochi messaggi rilevati in 1m30s: " + $cnt);
+                soundPlayer.playAlertSound();
 end
 
