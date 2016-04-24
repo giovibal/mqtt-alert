@@ -1,0 +1,42 @@
+import io.github.giovibal.PirEvent
+
+global io.github.giovibal.CepManager engine;
+global io.github.giovibal.SoundPlayer soundPlayer;
+
+declare PirEvent
+    @role(event)
+    @timestamp(timestamp)
+//    @expires( 1m1s )
+end
+
+declare window GateEvents
+    PirEvent() over window:time( 1m1s )
+end
+
+rule "Debug"
+    when
+        $s : PirEvent()
+    then
+        engine.logEvent("--- " + $s);
+end
+
+
+rule "Missing Communication"
+    when
+        $evt : PirEvent()
+        not( PirEvent(this != $evt, this after[0,1m5s] $evt) )
+    then
+        engine.logEvent("--- Mancata Comunicazione !! ");
+        soundPlayer.playAlertSound();
+end
+
+
+rule "Intrusion Detected"
+    when
+        $evt : PirEvent(msg contains "Presenza rilevata")
+    then
+        engine.logEvent("--- Presenza Rilevata !!");
+        soundPlayer.playAlertSound();
+end
+
+
