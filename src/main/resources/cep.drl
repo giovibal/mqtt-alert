@@ -64,7 +64,7 @@ rule "Missing Communication 2"
             $cnt < 2
         )
     then
-        engine.logEvent("--- Mancata Comunicazione 2 !! ( pochi messaggi rilevati in 1m30s: " + $cnt);
+        engine.logEvent("--- Mancata Comunicazione 2 !! (pochi messaggi rilevati in 2m30s: " + $cnt + ")");
                 soundPlayer.playAlertSound();
 end
 
