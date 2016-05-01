@@ -3,6 +3,7 @@ package io.github.giovibal;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.nio.charset.Charset;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -81,5 +82,22 @@ public class MqttClientManager {
         me.printStackTrace();
     }
 
+    public void publish(String topic, String msg) {
+        try {
+            if(mqttClient!=null && mqttClient.isConnected()) {
+                MqttMessage m = new MqttMessage();
+                m.setPayload(msg.getBytes("utf-8"));
+                m.setRetained(true);
+                m.setQos(1);
+                mqttClient.publish(topic, m);
+                System.out.println("Disconnected");
+            }
+        } catch(MqttException me) {
+            handleException(me);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

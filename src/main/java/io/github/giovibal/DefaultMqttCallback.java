@@ -14,9 +14,10 @@ public class DefaultMqttCallback implements MqttCallback {
     private long lastAlertTime;
     private CepManager cepManager;
     private SoundPlayer soundPlayer;
+    private MqttClientManager mqttClient;
 
-    public DefaultMqttCallback() {
-        cepManager = new CepManager();
+    public DefaultMqttCallback(MqttClientManager mqttClient) {
+        cepManager = new CepManager(mqttClient);
         soundPlayer = new SoundPlayer();
         cepManager.setGlobal("soundPlayer", soundPlayer);
     }

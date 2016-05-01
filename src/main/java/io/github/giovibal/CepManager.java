@@ -12,6 +12,7 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
 import java.io.InputStream;
+import java.util.Date;
 
 /**
  * Created by giovibal on 24/04/16.
@@ -25,8 +26,11 @@ public class CepManager {
     private KieSession kieSession;
     private KieBaseConfiguration kieBaseConfiguration;
 
+    private  MqttClientManager mqttClient;
 
-    public CepManager() {
+
+    public CepManager(MqttClientManager mqttClient) {
+        this.mqttClient = mqttClient;
         InputStream fis = getClass().getResourceAsStream("/cep.drl");
         initRuleEngine(fis);
     }
@@ -65,6 +69,8 @@ public class CepManager {
 
 
     public void logEvent(String msg) {
-        System.out.println(msg);
+        String s = String.format("[%s]: %s", new Date(), msg);
+        System.out.println(s);
+        mqttClient.publish("/baleani/laspio/logs", s);
     }
 }

@@ -29,7 +29,7 @@ public class MqttAlert {
     }
 
     public void connectAndSubscribe(String broker, String topic) {
-        mqttClient = new MqttClientManager(broker, topic, new DefaultMqttCallback());
+        mqttClient = new MqttClientManager(broker, topic, new DefaultMqttCallback(mqttClient));
         mqttClient.connectAndSubscribe();
         mqttClient.startConnectionWatchdog(1);
     }
@@ -37,5 +37,6 @@ public class MqttAlert {
     public void disconnect() {
         mqttClient.disconnect();
     }
+
 
 }

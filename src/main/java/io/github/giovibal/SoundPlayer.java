@@ -30,6 +30,11 @@ public class SoundPlayer {
             // Open audio clip and load samples from the audio input stream.
             clip.open(audioIn);
             clip.start();
+            long waitTime = clip.getMicrosecondLength()/1000;
+            Thread.sleep(waitTime);
+            clip.drain();
+            clip.close();
+
         } catch (UnsupportedAudioFileException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -39,5 +44,6 @@ public class SoundPlayer {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+        System.out.println("Play end");
     }
 }
