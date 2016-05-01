@@ -1,5 +1,6 @@
 package io.github.giovibal;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
@@ -26,11 +27,7 @@ public class CepManager {
     private KieSession kieSession;
     private KieBaseConfiguration kieBaseConfiguration;
 
-    private  MqttClientManager mqttClient;
-
-
-    public CepManager(MqttClientManager mqttClient) {
-        this.mqttClient = mqttClient;
+    public CepManager() {
         InputStream fis = getClass().getResourceAsStream("/cep.drl");
         initRuleEngine(fis);
     }
@@ -71,6 +68,10 @@ public class CepManager {
     public void logEvent(String msg) {
         String s = String.format("[%s]: %s", new Date(), msg);
         System.out.println(s);
-        mqttClient.publish("/baleani/laspio/logs", s);
+
+//        try {
+//            MqttClient mqtt = new MqttClient("tcp://104.154.60.150:1883")
+//            mqtt.publish("/baleani/laspio/logs", s);
+//        } catch(Throwable e ) {}
     }
 }
