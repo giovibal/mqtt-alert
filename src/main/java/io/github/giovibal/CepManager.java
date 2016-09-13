@@ -1,6 +1,5 @@
 package io.github.giovibal;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
