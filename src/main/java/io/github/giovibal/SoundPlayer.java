@@ -25,13 +25,23 @@ public class SoundPlayer {
 //            InputStream soundFile = getClass().getResourceAsStream("/alarm_beep.wav");
             InputStream soundFileBuffered = new BufferedInputStream(soundFile);
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFileBuffered);
+
             // Get a sound clip resource.
-            Clip clip = AudioSystem.getClip();
+            Clip clip;
+//            clip = AudioSystem.getClip();
+            // PATCH UBUNTU
+            DataLine.Info info = new DataLine.Info(Clip.class, audioIn.getFormat());
+            clip = (Clip)AudioSystem.getLine(info);
+            // PATCH UBUNTU END
+
             // Open audio clip and load samples from the audio input stream.
             clip.open(audioIn);
             clip.start();
-            long waitTime = clip.getMicrosecondLength()/1000;
-            Thread.sleep(waitTime);
+            while(clip.isRunning()) {
+                Thread.yield();
+            }
+//            long waitTime = clip.getMicrosecondLength()/1000;
+//            Thread.sleep(waitTime);
             clip.drain();
             clip.close();
 
@@ -45,5 +55,12 @@ public class SoundPlayer {
             e.printStackTrace();
         }
         System.out.println("Play end");
+    }
+
+    public static void main(String[] args) {
+        SoundPlayer p = new SoundPlayer();
+        p.playAlertSound();
+        p.playWarningSound();
+//        p.playSound("/sounds-1045-sisfus.mp3");
     }
 }

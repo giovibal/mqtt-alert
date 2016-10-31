@@ -8,10 +8,6 @@ declare PirEvent
     @timestamp(timestamp)
 end
 
-//declare window GateEvents
-//    PirEvent() over window:time( 1m1s )
-//end
-
 rule "Debug"
     when
         $s : PirEvent()
